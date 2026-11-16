@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Китайский: HSK 2–3</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="words.js"></script>
+<style>
+:root{
+  --bg:var(--tg-theme-bg-color,#ffffff);
+  --text:var(--tg-theme-text-color,#1c1c1e);
+  --hint:var(--tg-theme-hint-color,#8a8a8e);
+  --card:var(--tg-theme-secondary-bg-color,#f1f1f4);
+  --btn:var(--tg-theme-button-color,#c8321e);
+  --btn-text:var(--tg-theme-button-text-color,#ffffff);
+  --good:#2e9e5b; --bad:#d6453d; --mid:#d99a1c;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+#app{max-width:520px;margin:0 auto;padding:16px 16px 32px;min-height:100vh;display:flex;flex-direction:column}
+h1{font-size:22px;margin:4px 0 16px}
+h2{font-size:15px;margin:22px 0 8px;color:var(--hint);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.zh{font-family:"PingFang SC","Noto Sans CJK SC","Noto Sans SC","Microsoft YaHei","Source Han Sans SC",sans-serif}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{background:var(--card);border-radius:14px;padding:12px 8px;text-align:center}
+.tile b{display:block;font-size:24px;line-height:1.2}
+.tile span{font-size:12px;color:var(--hint)}
+.seg{display:flex;background:var(--card);border-radius:12px;padding:3px;margin-top:12px}
+.seg button{flex:1;border:0;background:none;color:var(--text);font:inherit;font-size:14px;padding:8px 4px;border-radius:9px}
+.seg button.on{background:var(--btn);color:var(--btn-text);font-weight:600}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:15px;font:inherit;font-weight:600;font-size:16px;background:var(--card);color:var(--text);margin-top:10px}
+.btn.main{background:var(--btn);color:var(--btn-text)}
+.btn small{display:block;font-weight:400;font-size:13px;opacity:.75;margin-top:2px}
+.btn:active{opacity:.7}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:14px;color:var(--hint)}
+.back{border:0;background:none;color:var(--btn);font:inherit;font-size:15px;padding:6px 0}
+.card{background:var(--card);border-radius:20px;padding:28px 16px;text-align:center;flex:1;min-height:300px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative}
+.card .hz{font-size:64px;line-height:1.2;word-break:keep-all}
+.card .hz.long{font-size:40px}
+.card .hz.phrase,.q .hz.phrase{font-size:26px;line-height:1.4;word-break:normal}
+.card .py{font-size:22px;margin-top:14px;color:var(--btn)}
+.card .tr{font-size:19px;margin-top:8px}
+.card .tap{color:var(--hint);font-size:14px;margin-top:24px}
+.card .ru{font-size:24px;line-height:1.3}
+.card .ru+.hz{margin-top:18px}
+.card .note{font-size:13px;color:var(--hint);margin-top:14px;max-width:320px}
+.seg.small{margin-top:0;min-width:210px}
+.seg.small button{font-size:13px;padding:7px 6px;white-space:nowrap}
+.badge{position:absolute;top:12px;left:14px;font-size:12px;color:var(--hint)}
+.say{position:absolute;top:8px;right:10px;border:0;background:none;font-size:22px;padding:6px}
+.grades{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.grades button{border:0;border-radius:14px;padding:14px 4px;font:inherit;font-weight:600;font-size:14px;color:#fff}
+.grades small{display:block;font-weight:400;font-size:11px;opacity:.85}
+.g0{background:var(--bad)}.g1{background:var(--mid)}.g2{background:var(--good)}
+.q{background:var(--card);border-radius:20px;padding:26px 16px;text-align:center;margin-bottom:6px}
+.q .hz{font-size:52px;line-height:1.2}
+.q .hz.long{font-size:34px}
+.q .ru{font-size:22px}
+.opt{display:block;width:100%;border:2px solid transparent;border-radius:14px;padding:13px;font:inherit;font-size:17px;background:var(--card);color:var(--text);margin-top:8px;text-align:center}
+.opt.zh{font-size:24px}
+.opt.right{border-color:var(--good);background:rgba(46,158,91,.15)}
+.opt.wrong{border-color:var(--bad);background:rgba(214,69,61,.15)}
+.explain{text-align:center;margin-top:14px;font-size:15px}
+.bar{height:10px;background:var(--card);border-radius:5px;overflow:hidden;margin:6px 0 2px}
+.bar i{display:block;height:100%;background:var(--btn);border-radius:5px}
+.row{display:flex;justify-content:space-between;font-size:14px}
+.row span:last-child{color:var(--hint)}
+.week{display:flex;align-items:flex-end;gap:6px;height:110px;margin-top:8px}
+.week div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:11px;color:var(--hint)}
+.week i{display:block;width:100%;background:var(--btn);border-radius:5px 5px 0 0;min-height:2px}
+.week b{font-size:11px;font-weight:400;color:var(--text)}
+.center{text-align:center;margin:auto 0}
+.big{font-size:56px}
+select{font:inherit;padding:8px 10px;border-radius:10px;border:0;background:var(--card);color:var(--text);max-width:70%}
+.set{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:15px}
+.link{border:0;background:none;color:var(--bad);font:inherit;font-size:14px;margin-top:26px;padding:8px}
+</style>
+</head>
+<body>
+<div id="app"><p class="center" style="color:#888">Загрузка…</p></div>
+<script>
+"use strict";
+var tg = window.Telegram && window.Telegram.WebApp;
+var cloudOK = false;
+try { cloudOK = !!(tg && tg.initData && tg.isVersionAtLeast && tg.isVersionAtLeast("6.9") && tg.CloudStorage); } catch (e) {}
+try { if (tg) { tg.ready(); tg.expand(); } } catch (e) {}
+
+// уровень 1 — свои слова из уроков; их прогресс хранится отдельно от одноимённых слов HSK (ключ с «@»)
+var W = (window.WORDS || []).map(function (a) {
+  return { h: a[0], p: a[1], t: a[2], l: a[3], topic: a[4] || "", note: a[5] || "", k: (a[3] === 1 ? "@" : "") + a[0] };
+});
+var MINE = {}, HAS_MINE = false, TOPICS = [], TOPIC_N = {};
+W.forEach(function (w) {
+  if (w.l !== 1) return;
+  MINE[w.h] = 1; HAS_MINE = true;
+  if (w.topic) { if (!TOPIC_N[w.topic]) { TOPIC_N[w.topic] = 0; TOPICS.push(w.topic); } TOPIC_N[w.topic]++; }
+});
+var NB = 8;                                // на сколько частей делится сохранённый прогресс
+var STEPS = [0, 1, 2, 4, 8, 16, 32, 64];   // через сколько дней повторять слово на каждой ступени
+var LEARNED = 5;                           // с этой ступени слово считается выученным
+
+var prog = {};                             // ключ слова -> [ступень, день следующего повторения]
+var meta = defaults();
+var screen = "load";
+var $app = document.getElementById("app");
+
+function defaults() {
+  // dir: "rz" — карточки «русский → иероглиф», "zr" — наоборот; py — показывать ли пиньинь
+  return { ts: 0, streak: 0, lastDay: 0, hist: {}, qT: 0, qR: 0, perDay: 10, level: HAS_MINE ? 1 : 0, newDay: 0, newCount: 0,
+           dir: "rz", py: false, topic: "" };   // topic — выбранная тема в «Моих уроках», "" — все темы
+}
+function today() {
+  var d = new Date();
+  return Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000);
+}
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+function shuffle(a) {
+  a = a.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function bucket(h) {
+  var s = 0;
+  for (var i = 0; i < h.length; i++) s += h.charCodeAt(i);
+  return s % NB;
+}
+function haptic(kind) {
+  try { if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred(kind); } catch (e) {}
+}
+
+/* ---------- сохранение ---------- */
+function persist(changed, all) {
+  meta.ts = Date.now();
+  var set = {}, b, k, data = {};
+  if (all) for (b = 0; b < NB; b++) set[b] = 1;
+  (changed || []).forEach(function (h) { set[bucket(h)] = 1; });
+  for (b in set) {
+    var o = {};
+    for (k in prog) if (bucket(k) === +b) o[k] = prog[k];
+    data["p" + b] = JSON.stringify(o);
+  }
+  data.meta = JSON.stringify(meta);
+  for (k in data) {
+    try { localStorage.setItem("hsk_" + k, data[k]); } catch (e) {}
+    if (cloudOK) { try { tg.CloudStorage.setItem(k, data[k]); } catch (e) {} }
+  }
+}
+function parseAll(get) {
+  var m = null, p = {};
+  try { m = JSON.parse(get("meta") || "null"); } catch (e) {}
+  for (var b = 0; b < NB; b++) {
+    try {
+      var o = JSON.parse(get("p" + b) || "{}");
+      for (var k in o) p[k] = o[k];
+    } catch (e) {}
+  }
+  return { m: m, p: p };
+}
+function apply(c) {
+  if (!c.m) return;
+  var d = defaults();
+  for (var k in c.m) d[k] = c.m[k];
+  if (!d.hist || typeof d.hist !== "object") d.hist = {};
+  meta = d; prog = c.p;
+}
+function init() {
+  apply(parseAll(function (k) { try { return localStorage.getItem("hsk_" + k); } catch (e) { return null; } }));
+  if (!cloudOK) { home(); return; }
+  var timer = setTimeout(function () { if (screen === "load") home(); }, 2500);
+  var keys = ["meta"];
+  for (var b = 0; b < NB; b++) keys.push("p" + b);
+  try {
+    tg.CloudStorage.getItems(keys, function (err, vals) {
+      clearTimeout(timer);
+      if (!err && vals) {
+        var c = parseAll(function (k) { return vals[k] || null; });
+        if (c.m && (c.m.ts || 0) > (meta.ts || 0)) apply(c);
+      }
+      if (screen === "load" || screen === "home") home();
+    });
+  } catch (e) { clearTimeout(timer); home(); }
+}
+
+/* ---------- учёт занятий ---------- */
+function touch(n) {
+  var d = today();
+  if (meta.lastDay !== d) {
+    meta.streak = meta.lastDay === d - 1 ? meta.streak + 1 : 1;
+    meta.lastDay = d;
+  }
+  meta.hist[d] = (meta.hist[d] || 0) + n;
+  for (var k in meta.hist) if (+k < d - 30) delete meta.hist[k];
+}
+function streakNow() { return meta.lastDay >= today() - 1 ? meta.streak : 0; }
+function pool() {
+  return W.filter(function (w) {
+    if (!meta.level) return w.l === 1 || !MINE[w.h];   // «всё»: слово, которое есть и в уроках, и в HSK, берётся из уроков
+    if (meta.level === 1 && TOPIC_N[meta.topic] && w.topic !== meta.topic) return false;
+    return w.l === meta.level;
+  });
+}
+function hzClass(w) { return "zh" + (w.h.length > 10 ? " phrase" : w.h.length > 4 ? " long" : ""); }
+function dueWords() {
+  var d = today();
+  return pool().filter(function (w) { return prog[w.k] && prog[w.k][1] <= d; });
+}
+function newLeft() {
+  var used = meta.newDay === today() ? meta.newCount : 0;
+  return Math.max(0, meta.perDay - used);
+}
+function unseen() { return pool().filter(function (w) { return !prog[w.k]; }); }
+
+/* ---------- главный экран ---------- */
+function home() {
+  screen = "home";
+  var due = dueWords().length, fresh = Math.min(newLeft(), unseen().length);
+  var lv = (HAS_MINE ? [[1, "Мои уроки"]] : []).concat([[2, "HSK 2"], [3, "HSK 3"], [0, "Всё"]]).map(function (x) {
+    return '<button class="' + (meta.level === x[0] ? "on" : "") + '" onclick="setLevel(' + x[0] + ')">' + x[1] + "</button>";
+  }).join("");
+  function seg(cur, fn, items) {
+    return '<div class="seg small">' + items.map(function (x) {
+      return '<button class="' + (cur === x[0] ? "on" : "") + '" onclick="' + fn + "(" + JSON.stringify(x[0]).replace(/"/g, "'") + ')">' + x[1] + "</button>";
+    }).join("") + "</div>";
+  }
+  var per = [5, 10, 15, 20, 30].map(function (n) {
+    return "<option" + (meta.perDay === n ? " selected" : "") + ">" + n + "</option>";
+  }).join("");
+  $app.innerHTML =
+    '<h1><span class="zh">汉语</span> · ' + (HAS_MINE ? "уроки и HSK 2–3" : "HSK 2–3") + "</h1>" +
+    '<div class="tiles">' +
+      '<div class="tile"><b>' + due + "</b><span>повторить</span></div>" +
+      '<div class="tile"><b>' + fresh + "</b><span>новых сегодня</span></div>" +
+      '<div class="tile"><b>' + streakNow() + "</b><span>дней подряд</span></div>" +
+    "</div>" +
+    '<div class="seg">' + lv + "</div>" +
+    (meta.level === 1 && TOPICS.length > 1
+      ? '<div class="set"><span>Тема</span><select onchange="setTopic(this.value)"><option value="">Все темы (' + pool0() + ")</option>" +
+          TOPICS.map(function (t) {
+            return '<option value="' + esc(t) + '"' + (meta.topic === t ? " selected" : "") + ">" + esc(t) + " (" + TOPIC_N[t] + ")</option>";
+          }).join("") + "</select></div>"
+      : "") +
+    '<button class="btn main" onclick="startCards(0)">Карточки<small>' +
+      (due + fresh ? "на сегодня: " + (due + fresh) : "на сегодня всё сделано") + "</small></button>" +
+    '<button class="btn" onclick="quizMenu()">Тест<small>10 вопросов с вариантами ответа</small></button>' +
+    '<button class="btn" onclick="stats()">Статистика</button>' +
+    '<div class="set"><span>Новых слов в день</span><select onchange="setPerDay(this.value)">' + per + "</select></div>" +
+    '<div class="set"><span>Карточки</span>' +
+      seg(meta.dir, "setDir", [["rz", 'Рус → <span class="zh">汉字</span>'], ["zr", '<span class="zh">汉字</span> → рус']]) + "</div>" +
+    '<div class="set"><span>Пиньинь</span>' + seg(meta.py, "setPy", [[false, "Скрыт"], [true, "Показан"]]) + "</div>" +
+    (W.length ? "" : '<p style="color:var(--bad)">Не найден файл words.js — он должен лежать рядом с index.html.</p>');
+}
+function setLevel(l) { meta.level = l; persist(); home(); }
+function setPerDay(v) { meta.perDay = +v; persist(); home(); }
+function setTopic(v) { meta.topic = v; persist(); home(); }
+function pool0() { return W.filter(function (w) { return w.l === 1; }).length; }
+function setDir(v) { meta.dir = v; persist(); home(); }
+function setPy(v) { meta.py = !!v; persist(); home(); }
+function label(w) { return w.l === 1 ? (w.topic || "Мои уроки") : "HSK " + w.l; }
+
+/* ---------- карточки ---------- */
+var queue = [], shown = false;
+function startCards(extra) {
+  var fresh = shuffle(unseen()).slice(0, newLeft() + extra);
+  queue = shuffle(dueWords()).concat(fresh);
+  nextCard();
+}
+function nextCard() {
+  screen = "cards"; shown = false;
+  if (!queue.length) { cardsDone(); return; }
+  drawCard();
+}
+function drawCard() {
+  var w = queue[0], isNew = !prog[w.k], rz = meta.dir === "rz";
+  var canSay = "speechSynthesis" in window && (!rz || shown);   // в режиме «русский → иероглиф» звук подсказал бы ответ
+  var hz = '<div class="hz ' + hzClass(w) + '">' + esc(w.h) + "</div>";
+  var py = meta.py && w.p ? '<div class="py">' + esc(w.p) + "</div>" : "";
+  var note = w.note ? '<div class="note">' + esc(w.note) + "</div>" : "";
+  var tap = '<div class="tap">Нажмите, чтобы увидеть ответ</div>';
+  $app.innerHTML =
+    '<div class="top"><button class="back" onclick="home()">← Назад</button><span>Осталось: ' + queue.length + "</span></div>" +
+    '<div class="card" onclick="reveal()">' +
+      '<span class="badge">' + esc(label(w)) + (isNew ? " · новое" : "") + "</span>" +
+      (canSay ? '<button class="say" onclick="say(event)">🔊</button>' : "") +
+      (rz
+        ? '<div class="ru">' + esc(w.t) + "</div>" + (shown ? hz + py + note : tap)
+        : hz + (shown ? py + '<div class="tr">' + esc(w.t) + "</div>" + note : tap)) +
+    "</div>" +
+    (shown
+      ? '<div class="grades">' +
+          '<button class="g0" onclick="grade(0)">Не помню<small>ещё раз сегодня</small></button>' +
+          '<button class="g1" onclick="grade(1)">Трудно<small>завтра</small></button>' +
+          '<button class="g2" onclick="grade(2)">Помню<small>через ' + days(nextStep(w)) + "</small></button>" +
+        "</div>"
+      : '<button class="btn main" onclick="reveal()">Показать ответ</button>');
+}
+function nextStep(w) {
+  var box = prog[w.k] ? prog[w.k][0] : 0;
+  return STEPS[Math.min(7, box + 1)];
+}
+function days(n) {
+  var a = n % 10, b = n % 100;
+  return n + " " + (a === 1 && b !== 11 ? "день" : a >= 2 && a <= 4 && (b < 12 || b > 14) ? "дня" : "дней");
+}
+function reveal() { if (!shown) { shown = true; drawCard(); } }
+function say(ev) {
+  if (ev) ev.stopPropagation();
+  try {
+    var u = new SpeechSynthesisUtterance(queue[0].h.replace(/…/g, "，"));
+    u.lang = "zh-CN"; u.rate = 0.85;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function grade(g) {
+  var w = queue.shift(), d = today(), isNew = !prog[w.k];
+  var box = isNew ? 0 : prog[w.k][0];
+  if (g === 0) { prog[w.k] = [1, d]; queue.push(w); }
+  else if (g === 1) { box = Math.max(1, box); prog[w.k] = [box, d + 1]; }
+  else { box = Math.min(7, box + 1); prog[w.k] = [box, d + STEPS[box]]; }
+  if (isNew) {
+    if (meta.newDay !== d) { meta.newDay = d; meta.newCount = 0; }
+    meta.newCount++;
+  }
+  touch(1);
+  persist([w.k]);
+  nextCard();
+}
+function cardsDone() {
+  var more = unseen().length;
+  $app.innerHTML =
+    '<div class="center"><div class="big zh">好!</div><h1>На сегодня всё</h1>' +
+    '<p style="color:var(--hint)">Слова вернутся, когда придёт время их повторить.</p></div>' +
+    (more ? '<button class="btn" onclick="startCards(5)">Ещё 5 новых слов</button>' : "") +
+    '<button class="btn" onclick="quizMenu()">Пройти тест</button>' +
+    '<button class="btn main" onclick="home()">На главную</button>';
+}
+
+/* ---------- тест ---------- */
+var quiz = null;
+var MODES = [
+  ["Иероглиф → перевод", "h", "t"],
+  ["Перевод → иероглиф", "t", "h"],
+  ["Иероглиф → пиньинь", "h", "p"]
+];
+// слова для теста: в режиме «пиньинь» годятся только слова, у которых пиньинь записан
+function quizPool(mode) { return pool().filter(function (w) { return mode !== 2 || w.p; }); }
+function quizMenu() {
+  screen = "quiz";
+  var seen = pool().filter(function (w) { return prog[w.k]; }).length;
+  $app.innerHTML =
+    '<div class="top"><button class="back" onclick="home()">← Назад</button><span></span></div>' +
+    "<h1>Тест</h1>" +
+    '<p style="color:var(--hint);margin-top:0">' +
+      (seen >= 10 ? "Вопросы по словам, которые вы уже проходили в карточках."
+                  : "Пока пройдено меньше 10 слов, вопросы берутся из всего списка.") + "</p>" +
+    MODES.map(function (m, i) {
+      if (i === 2 && !(meta.py && quizPool(2).length >= 4)) return "";   // тест на пиньинь — только если он включён
+      return '<button class="btn" onclick="startQuiz(' + i + ')">' + m[0] + "</button>";
+    }).join("");
+}
+function startQuiz(mode) {
+  var all = quizPool(mode), seen = all.filter(function (w) { return prog[w.k]; });
+  var src = seen.length >= 10 ? seen : all;
+  quiz = { mode: mode, items: shuffle(src).slice(0, 10), i: 0, right: 0, picked: null, opts: null };
+  drawQuestion();
+}
+function drawQuestion() {
+  screen = "quiz";
+  var m = MODES[quiz.mode], w = quiz.items[quiz.i], qf = m[1], af = m[2];
+  if (!quiz.opts) {
+    var used = {}; used[w[af]] = 1;
+    var others = [];
+    shuffle(quizPool(quiz.mode)).some(function (x) {
+      if (!used[x[af]] && x[qf] !== w[qf]) { used[x[af]] = 1; others.push(x); }
+      return others.length === 3;
+    });
+    quiz.opts = shuffle([w].concat(others));
+  }
+  var done = quiz.picked !== null;
+  var opts = quiz.opts.map(function (o, i) {
+    var cls = "opt" + (af === "h" ? " zh" : "");
+    if (done && o === w) cls += " right";
+    else if (done && i === quiz.picked) cls += " wrong";
+    return '<button class="' + cls + '" onclick="pick(' + i + ')">' + esc(o[af]) + "</button>";
+  }).join("");
+  $app.innerHTML =
+    '<div class="top"><button class="back" onclick="home()">← Назад</button><span>Вопрос ' + (quiz.i + 1) + " из " + quiz.items.length + "</span></div>" +
+    '<div class="q">' + (qf === "h"
+      ? '<div class="hz ' + hzClass(w) + '">' + esc(w.h) + "</div>"
+      : '<div class="ru">' + esc(w.t) + "</div>") + "</div>" +
+    opts +
+    (done
+      ? '<div class="explain"><span class="zh" style="font-size:22px">' + esc(w.h) + "</span>" +
+          (w.p && (meta.py || quiz.mode === 2) ? " · " + esc(w.p) : "") + " — " + esc(w.t) + "</div>" +
+        '<button class="btn main" onclick="nextQuestion()">' + (quiz.i + 1 < quiz.items.length ? "Дальше" : "Результат") + "</button>"
+      : "");
+}
+function pick(i) {
+  if (quiz.picked !== null) return;
+  var w = quiz.items[quiz.i], ok = quiz.opts[i] === w;
+  quiz.picked = i;
+  meta.qT++;
+  if (ok) { quiz.right++; meta.qR++; haptic("success"); }
+  else {
+    haptic("error");
+    if (prog[w.k]) prog[w.k] = [Math.max(1, prog[w.k][0] - 1), today()];   // ошиблись — слово вернётся в карточки
+  }
+  touch(1);
+  persist(ok ? [] : [w.k]);
+  drawQuestion();
+}
+function nextQuestion() {
+  quiz.i++; quiz.picked = null; quiz.opts = null;
+  if (quiz.i < quiz.items.length) { drawQuestion(); return; }
+  var r = quiz.right, n = quiz.items.length;
+  $app.innerHTML =
+    '<div class="center"><div class="big">' + r + " / " + n + "</div><h1>" +
+    (r === n ? "Без ошибок!" : r >= n * 0.7 ? "Хороший результат" : "Есть что повторить") + "</h1>" +
+    '<p style="color:var(--hint)">Слова с ошибками снова появятся в карточках.</p></div>' +
+    '<button class="btn" onclick="startQuiz(' + quiz.mode + ')">Ещё раз</button>' +
+    '<button class="btn main" onclick="home()">На главную</button>';
+}
+
+/* ---------- статистика ---------- */
+function stats() {
+  screen = "stats";
+  var learning = 0, learned = 0, k;
+  for (k in prog) { if (prog[k][0] >= LEARNED) learned++; else learning++; }
+  function level(l) {
+    var all = W.filter(function (w) { return w.l === l; });
+    var seen = all.filter(function (w) { return prog[w.k]; }).length;
+    var pct = all.length ? Math.round(seen / all.length * 100) : 0;
+    return '<div class="row"><span>' + (l === 1 ? "Мои уроки" : "HSK " + l) + "</span><span>" + seen + " из " + all.length + "</span></div>" +
+      '<div class="bar"><i style="width:' + pct + '%"></i></div>';
+  }
+  var d = today(), max = 1, i, week = "", names = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
+  for (i = 6; i >= 0; i--) max = Math.max(max, meta.hist[d - i] || 0);
+  for (i = 6; i >= 0; i--) {
+    var n = meta.hist[d - i] || 0, wd = new Date(Date.now() - i * 86400000).getDay();
+    week += "<div><b>" + (n || "") + '</b><i style="height:' + Math.round(n / max * 75) + '%"></i>' + names[wd] + "</div>";
+  }
+  var acc = meta.qT ? Math.round(meta.qR / meta.qT * 100) + "%" : "—";
+  $app.innerHTML =
+    '<div class="top"><button class="back" onclick="home()">← Назад</button><span></span></div>' +
+    "<h1>Статистика</h1>" +
+    '<div class="tiles">' +
+      '<div class="tile"><b>' + learning + "</b><span>изучается</span></div>" +
+      '<div class="tile"><b>' + learned + "</b><span>выучено</span></div>" +
+      '<div class="tile"><b>' + streakNow() + "</b><span>дней подряд</span></div>" +
+    "</div>" +
+    "<h2>Пройдено слов</h2>" + (HAS_MINE ? level(1) : "") + level(2) + level(3) +
+    "<h2>Ответов за 7 дней</h2>" + '<div class="week">' + week + "</div>" +
+    "<h2>Тесты</h2>" +
+    '<div class="row"><span>Правильных ответов</span><span>' + acc + " (" + meta.qR + " из " + meta.qT + ")</span></div>" +
+    '<p style="color:var(--hint);font-size:13px;margin-top:18px">«Выучено» — слово, которое вы вспомнили ' + LEARNED +
+      " раз подряд с растущими перерывами. " +
+      (cloudOK ? "Прогресс хранится в вашем Телеграме и виден на всех устройствах."
+               : "Прогресс хранится только в этом браузере.") + "</p>" +
+    '<button class="link" onclick="resetAll()">Сбросить весь прогресс</button>';
+}
+function resetAll() {
+  var go = function (ok) {
+    if (!ok) return;
+    var keep = { perDay: meta.perDay, level: meta.level };
+    prog = {}; meta = defaults(); meta.perDay = keep.perDay; meta.level = keep.level;
+    persist([], true); home();
+  };
+  var msg = "Удалить весь прогресс и начать заново?";
+  try { if (tg && tg.initData && tg.showConfirm) { tg.showConfirm(msg, go); return; } } catch (e) {}
+  go(window.confirm(msg));
+}
+
+init();
+</script>
+</body>
+</html>
